@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<!-- Instructs Spring to perfrom declarative transaction managemenet on 
+		annotated classes -->
+	<tx:annotation-driven />
+
+	<!-- Drives transactions using local JPA APIs -->
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider 
+		and a simple in-memory data source populated with test data -->
+	<bean id="entityManagerFactory"
+		class="org.openkoala.koala.util.KoalaEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="default" /> 
+		<property name="packagesToScan">
+			<list>
+								<value>com.ware.token.warehouse.core.domain</value>
+                				<value>org.openkoala.gqc.core.domain</value>
+                				<value>org.openkoala.businesslog.model</value>
+                				<value>org.openkoala.security.core.domain</value>
+                				<value>org.openkoala.organisation.core.domain</value>
+                				<value>org.openkoala.security.org.core.domain</value>
+                			</list>
+		</property>
+		<!-- 如果权限使用了不同的数据源，则去掉securitymappings -->
+		<property name="scanMappingResourceDir" value="mappings,securitymappings" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="${database.Type}"></property>
+				<property name="showSql" value="${hibernate.show_sql}"></property>
+				<property name="generateDdl" value="${generateDdl}"></property>
+				<property name="databasePlatform" value="${db.jdbc.dialect}"></property>
+			</bean>
+		</property>
+	</bean>
+
+    <bean id="defaultEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean" scope="prototype">
+        <property name="persistenceUnitName" value="default" />
+    </bean>
+
+    <bean id="repository" class="org.openkoala.koala.commons.domain.jpa.KoalaEntityRepositoryJpa">
+        <property name="entityManagerName" value="defaultEntityManager"/>
+    </bean>
+
+    <bean id="queryChannel" class="org.dayatang.querychannel.impl.QueryChannelServiceImpl">
+        <constructor-arg name="repository" ref="repository" />
+    </bean>
+	
+	<bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver" value="${db.jdbc.driver}" />
+		<property name="driverUrl" value="${db.jdbc.connection.url}" />
+		<property name="user" value="${db.jdbc.username}" />
+		<property name="password" value="${db.jdbc.password}" />
+		<property name="prototypeCount" value="5" />
+		<property name="maximumConnectionCount" value="${maximumConnectionCount}" />
+		<property name="minimumConnectionCount" value="${minimumConnectionCount}" />
+		<property name="houseKeepingTestSql" value="${db.jdbc.testsql}"/>
+		<property name="testBeforeUse" value="true"/>
+        <property name="simultaneousBuildThrottle" value="20"/>
+        <property name="maximumActiveTime" value="3600000"/>
+		<property name="alias" value="default"/>
+	</bean>
+	
+	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="timeout" value="300" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	<!-- 支持上传文件 -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设置上传文件的最大尺寸为1MB -->  
+	    <property name="maxUploadSize">  
+	        <value>5048576</value>  
+	    </property>  
+    </bean>
+	
+	
+	   <!-- mybatis文件配置，扫描所有mapper文件 -->
+      <bean id="sqlSessionFactory"
+          class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:configLocation="classpath:conf/mybatis-config.xml"
+          p:mapperLocations="classpath:mapper/*.xml"/><!-- configLocation为mybatis属性 mapperLocations为所有mapper-->
+       
+		   <!-- spring与mybatis整合配置，扫描所有dao -->
+		 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+		        p:basePackage="org.openkoala.warehouse.facade.dao"
+		        p:sqlSessionFactoryBeanName="sqlSessionFactory"/>
+		  
+		   <!-- 对数据源进行事务管理 -->
+		  <bean id="transactionManager1"
+		        class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		        p:dataSource-ref="dataSource"/>
+	
+	
+</beans>

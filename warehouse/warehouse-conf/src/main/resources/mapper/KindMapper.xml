@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.openkoala.warehouse.facade.dao.KindDAO">
+   
+   <!-- 获取最大对应code -->         
+  <select id="getMaxIdByCodeType" parameterType="Kind"  resultType="int">
+         select IFNULL(max(code),0) from kg_kind where code_type=#{codeType}
+  </select>
+  
+  <!-- 根据upcode获取子类型 -->
+   <select id="getByUpCode" parameterType="Kind"  resultType="Kind">
+         select code,code_name from kg_kind where up_code=#{upCode}
+   </select>
+   
+     <!-- 根据upcode获取子类型 -->
+   <select id="getUpName" parameterType="Kind"  resultType="Kind">
+         select code,code_name codeName  from kg_kind where 1 = 1
+         <if test="codeType != null and codeType != ''">
+        	 and code_type=#{codeType}
+         </if>
+         <if test="upCode != null and upCode != ''">
+        	 and up_code=#{upCode}
+         </if>
+        <if test="codeName != null and codeName != ''">
+        	 and code_name=#{codeName}
+         </if>
+         <if test="code != null and code != ''">
+        	 and code=#{code}
+         </if>
+   </select>
+
+     <!-- 默认查询 -->
+   <select id="getKindByCode" parameterType="Kind"  resultType="Kind">
+         select code, code_name codeName from kg_kind where 1=1 
+         <if test="codeType != null and codeType != ''">
+          	and code_type = #{codeType}
+         </if>
+<!--          <if test="code != null and code != ''"> -->
+          	and code = #{code}
+<!--          </if> -->
+   </select>
+   
+     <!-- 根据codeName获取子类型 -->
+   <select id="getByUpCodeName" parameterType="Kind"  resultType="Kind">
+         select code,code_name codeName from kg_kind 
+         where up_code in( 
+         	select code from kg_kind b 
+         		where b.code_name = #{codeName}
+         		 and b.code_type = #{codeType}
+         )
+   </select>
+   
+</mapper>

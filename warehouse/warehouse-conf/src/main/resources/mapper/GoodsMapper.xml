@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.openkoala.warehouse.facade.dao.GoodsDAO">
+   
+   <!-- 获取最大对应code -->         
+  <select id="countQuery" parameterType="Goods"  resultType="int">
+         select count(1) 
+         FROM kg_bill_goods a, kg_box b, kg_way_bill c
+         LEFT JOIN kg_out_way d  ON c.WAYBILL_ID = d.WAYBILL_ID 
+         WHERE a.box_id = b.box_id AND a.WAYBILL_ID = b.WAYBILL_ID AND  a.WAYBILL_ID = c.WAYBILL_ID
+         <if test="waybillId != null and waybillId != ''">
+        	 and a.WAYBILL_ID=#{waybillId}
+         </if>
+         <if test="goodsId != null and goodsId != ''">
+        	 and a.GOODS_ID=#{goodsId}
+         </if>
+         <if test="goodsName != null and goodsName != ''">
+        	 and a.GOODS_NAME=#{goodsName}
+         </if>
+  </select>
+  
+  <select id="QueryByPage" parameterType="Goods"  resultType="map">
+          SELECT a.GOODS_ID goodsId, a.GOODS_NAME goodsName, a.GOODS_TYPE goodsType, a.GOODS_NUM goodsNum,
+         a.JPY_PRICE goodsJpy, a.CNY_PRICE  goodsCny, a.USD_PRICE  goodsUsd, a.EUR_PRICE goodsEur,
+         (SELECT code_name FROM kg_kind WHERE code_type='kind' AND  CODE = a.BIG_TYPE) bigType,
+         (SELECT code_name FROM kg_kind WHERE code_type='kind' AND  CODE = a.SMALL_TYPE) smallType,
+         a.model model,(SELECT code_name FROM kg_kind WHERE code_type='country' AND  CODE = a.country) country,
+         a.composition composition, a.weight goodsWeight,a.length goodsLength, a.width goodsWidth,
+         a.height goodsHeight, a.volume goodsVolume,
+         
+         b.weight boxWeight,b.lenght boxLength, b.width boxWidth,
+         b.height boxHeight, b.volume boxVolume,
+         
+         c.waybill_Id waybillId, c.wayBill_From wayBillFrom, 
+         c.wayBill_Internet wayBillInternet, c. way_Bill_Coo wayBillCoo,
+         c.JPY_PRICE billJpy, c.CNY_PRICE  billCny, c.USD_PRICE  billUsd, c.EUR_PRICE billEur,
+         DATE_FORMAT(c.ARRIVAL_Time,'%Y-%m-%d') ArrivalTime, 
+         CASE OUT_FLAG WHEN '2' THEN 'YES' ELSE '' END outFlag,
+         
+         d.OUT_WAY_ID outWayId, d.OUT_WAY_COO outWayCoo, d.reciever_Addr recieverAddr,d.customer_Name customerName,
+         CASE d. Merge_Flag WHEN '1' THEN 'YES' ELSE '' END mergeFlag,
+         d.weight outWeight,d.length outLength, d.width outWidth,
+         d.height outHeight, d.volume outVolume
+         
+         FROM kg_bill_goods a, kg_box b, kg_way_bill c
+         LEFT JOIN kg_out_way d  ON c.WAYBILL_ID = d.WAYBILL_ID 
+         WHERE a.box_id = b.box_id AND a.WAYBILL_ID = b.WAYBILL_ID AND  a.WAYBILL_ID = c.WAYBILL_ID
+         <if test="waybillId != null and waybillId != ''">
+        	 and a.WAYBILL_ID=#{waybillId}
+         </if>
+         <if test="goodsId != null and goodsId != ''">
+        	 and a.GOODS_ID=#{goodsId}
+         </if>
+         <if test="goodsName != null and goodsName != ''">
+        	 and a.GOODS_NAME=#{goodsName}
+         </if>
+         limit #{page},#{pagesize}
+  </select>
+  
+ 	 <delete id="deleteBox" parameterType="java.lang.String">
+		delete from kg_box where waybill_id=#{wayBillId}
+	</delete>
+	
+	<delete id="deleteGoods" parameterType="java.lang.String">
+		delete from kg_bill_goods where waybill_id=#{wayBillId}
+	</delete>
+   
+</mapper>
