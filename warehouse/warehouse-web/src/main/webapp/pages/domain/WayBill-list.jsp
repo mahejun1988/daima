@@ -80,7 +80,7 @@ $(function (){
 	                columns: [
 										   { title: $.i18n.prop('customer.id'), name: 'eurPrice', width: width},
 	               	                       { title: $.i18n.prop('express.no'), name: 'waybillId', width: width+20},
-	               	                       { title: $.i18n.prop('out.flag'), name: 'outFlag', width: 70},
+	               	                       { title: $.i18n.prop('out.flag'), name: 'outFlagName', width: 70},
 	                   	                   { title: $.i18n.prop('out.time'), name: 'outTime', width: 100},
 	                   	                   { title: $.i18n.prop('express.arrived.time'), name: 'arrivalTime', width: 100},
 	                   	                   { title: $.i18n.prop('express.box.count'), name: 'wayBillNum', width: 70},

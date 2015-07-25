@@ -121,18 +121,22 @@ input[type=file]{
 </style>
 </head>
 <body class="waybill">
-	<section class="section" id="content">
-			<form id="submit" >
-			<article class="yundan" id="yd-1">
+	<section class="section" id="updatecontent">
+			<form id="submit3" enctype="multipart/form-data" >
+			<article class="yundan" id="yd-2">
 				<h2><koala:i18n key="express.info"/></h2>
 				<input name="yundanid" type="hidden" value="${result.id}"/>
+				<input type="hidden"  name="createTime"  value="${result.createTime}"/>
+				<input type="hidden"  name="createUser"  value="${result.createUser}"/>
+				<input type="hidden"  name="outTime"  value="${result.outTime}"/>
+				<input type="hidden"  name="outFlag"  value="${result.outFlag}"/>
 				<input type="hidden"  name="yundanversion" value="${result.version}"/>
 				<div class="form-inline">
 					<div class="form-group">
 				  		<label><koala:i18n key="customer.id"/><span class="required">*</span></label><input dataType="Require" name="yd_eur"   type="text" class="form-control num" value="${result.eurPrice}"></input>
 				 	</div>
 					<div class="form-group">
-				  		<label><koala:i18n key="express.no"/><span class="required">*</span></label><input dataType="Require" name="yd_id"   type="text" id="yundanCode" class="form-control num" value="${result.waybillId}"></input>
+				  		<label><koala:i18n key="express.no"/><span class="required">*</span></label><input dataType="Require" readonly name="yd_id"   type="text" id="yundanCode" class="form-control num" value="${result.waybillId}"></input>
 				 	</div>
 				  <div class="form-group">
 				  	<label><koala:i18n key="express.company"/><span class="required">*</span></label><input dataType="Require" type="text" name="yd_coo" required data-provide="typeahead" id="coo" value="${result.wayBillCoo}" data-source='["Deluxe Bicycle","123123123", "Super Deluxe Trampoline", "Super Duper Scooter"]' class="form-control"></input>
@@ -169,6 +173,8 @@ input[type=file]{
 			  <article class="xiangzi" id="xiangzi">
 				  <c:forEach var="xzDto" items="${result.list}"  varStatus="status">
 				  	<div class="xz xiangzi" id="xz-${status.index+1}">
+				  		<input type="hidden" id="createTimeID"  name="createTime"  value="${xzDto.createTime}"/>
+						<input type="hidden" id="createUserID"  name="createUser"  value="${xzDto.createUser}"/>
 				  		<input name="xiangziid" type="hidden" value="${xzDto.id}"/>
 				  		<input type="hidden"  name="xiangziversion" value="${xzDto.version}"/>
 				  		<h2><koala:i18n key="box"/>${status.index+1}<koala:i18n key="info"/></h2>
@@ -199,6 +205,8 @@ input[type=file]{
 					  	<div class="sp" id="sp-${status2.index+1}">
 					  		<input name="shangpinid" type="hidden" value="${spDto.id}"/>
 					  		<input type="hidden"  name="shangpinversion" value="${spDto.version}"/>
+					  		<input type="hidden" id="createTimeID"  name="createTime"  value="${spDto.createTime}"/>
+							<input type="hidden" id="createUserID"  name="createUser"  value="${spDto.createUser}"/>
 								<h2 id="here"><koala:i18n key="box"/>${status.index+1}<koala:i18n key="goods"/>${status2.index+1}</h2>
 								<div class="form-inline">
 								  <div class="form-group">
@@ -247,9 +255,9 @@ input[type=file]{
 							  		<div class="form-group">
 <!-- 									   		<form id="imageForm" action="" method="post" enctype="multipart/form-data" > -->
 <!-- 									  			<label>商品照片1</label><input type="file"  onchange="upload($(this))" id="goodsimage" name="goodsimage"></input> -->
-												<label><koala:i18n key="PIC"/></label><input type="file"  onchange="upload($(this))"  name="file"></input>
+												<label><koala:i18n key="PIC"/></label><input type="file"  onchange="upload($(this),this)"  name="file"></input>
 									  			<img class="img-thumbnail image" src="${spDto.image}"/>
-									  			<input type="hidden"  id="goodsimage" name="image">
+									  			<input type="hidden"  id="goodsimage" name="image" value="${spDto.image}">
 <!-- 									  		</form> -->
 									 </div>
 							  	</div>

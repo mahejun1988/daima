@@ -232,16 +232,6 @@ function getCountry(obj){
 	  	})
 }
 
-// 图片上传
-function upload(obj,file){
-	 if (file.files && file.files[0]) {
-		 var reader = new FileReader();
-		 reader.onload = function(evt){
-			 obj.next().attr("src",evt.target.result);
-		 }
-		 reader.readAsDataURL(file.files[0]);
-	 }
-};
 //function upload(file){
 ////	var form = obj.parent();
 ////	var $this = $(this);
@@ -383,10 +373,23 @@ function showSP(o){
 	o.next().show();
 }
 
+//图片上传
+function upload(obj,file){
+	 if (file.files && file.files[0]) {
+//		 alert(file.files[0].name);
+		 var reader = new FileReader();
+		 reader.onload = function(evt){
+			 obj.next().attr("src",evt.target.result);
+			 obj.next().next().attr("value",file.files[0].name);
+		 }
+		 reader.readAsDataURL(file.files[0]);
+	 }
+};
+
 // 入库保存
 function save(){
 	
-	if(!Validator.Validate($("#content").find('form')[0],3)){
+	if(!Validator.Validate($("#wayBillcontent").find('form')[0],3)){
 		return;
 	}
 	// 运单信息
@@ -396,7 +399,8 @@ function save(){
 	//alert($("#yd-1").find("[name='yd_id']").val());
 	param.waybillId = $("#yd-1").find("[name='yd_id']").val();
 	param.wayBillCoo = $("#yd-1").find("[name='yd_coo']").val();
-	param.arrivalTime = $("#yd-1").find("[name='yd_time']").val()+" 00:00:00" ;
+	param.arrivalTime = $("#yd-1").find("[name='yd_time']").val() + " 00:00:00" ;
+	
 	param.wayBillFrom = $("#yd-1").find("[name='yd_address']").val();
 	param.wayBillInternet = $("#yd-1").find("[name='yd_url']").val();
 	param.jpyPrice = $("#yd-1").find("[name='yd_jpy']").val();
@@ -406,6 +410,7 @@ function save(){
 	param.wayBillNum = $("#yd-1").find("[name='yd_num']").val();
 	ydDataArr.push(param);
 	var ydArrJson = JSON.stringify(ydDataArr);
+	
 	
 	//箱子json信息
 	var xzDataArr=[];
@@ -467,7 +472,7 @@ function save(){
 	})
 	var spArrJson = JSON.stringify(spDataArr);
 	var $this = $(this);
-	$.ajax({
+	$("#wayBillsubmit").ajaxSubmit({
 	  	   type: "POST",
 	  	   async: false,
 	  	   data: {ydArrJson:ydArrJson,xzArrJson:xzArrJson,spArrJson:spArrJson},

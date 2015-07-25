@@ -27,9 +27,9 @@ public class WayBillAssembler {
      	    	result.setArrivalTime (wayBill.getArrivalTime());
      	    	result.setOutFlag (wayBill.getOutFlag());
 	     	    if(wayBill.getOutFlag() != null && "2".equals(wayBill.getOutFlag())){
-	     	    	result.setOutFlag ("YES");
+	     	    	result.setOutFlagName("YES");
 	     	    }else{
-	     	    	result.setOutFlag ("NO");
+	     	    	result.setOutFlagName ("NO");
 	     	    }
      	    	result.setOutTime(wayBill.getOUT_Time());
      	    	result.setCreateTime (wayBill.getCreateTime());

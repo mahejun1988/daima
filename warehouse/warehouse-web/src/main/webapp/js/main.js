@@ -118,6 +118,7 @@ var openTab = function(target, title, mark, id, param){
         tabs.find('a[href="#'+mark+'"]').find('span').html(title);
         return;
     }
+//    contents.html("");
     content = $('<div id="'+mark+'" class="tab-pane" data-value="'+id+'"></div>');
     content.data(param);
     loadContent(content, target);

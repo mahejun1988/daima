@@ -8,7 +8,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.type.TypeReference;
 import org.dayatang.utils.Page;
 
@@ -34,7 +35,6 @@ import com.ware.token.warehouse.facade.BoxFacade;
 import com.ware.token.warehouse.facade.GoodsFacade;
 import com.ware.token.warehouse.facade.WayBillFacade;
 
-import org.joda.time.DateTime;
 import org.openkoala.gqc.infra.util.JacksonUtil;
 import org.openkoala.koala.commons.InvokeResult;
 import org.openkoala.security.shiro.CurrentUser;
@@ -56,10 +56,12 @@ public class WayBillController {
 	@Autowired
 	private GoodsService goodsService;
 	
+	
 	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping("/addYd")
-	public InvokeResult add(@RequestParam("ydArrJson")String ydArrJson,
+	public InvokeResult add(MultipartHttpServletRequest fileRequest,
+							@RequestParam("ydArrJson")String ydArrJson,
 							@RequestParam("xzArrJson")String xzArrJson,
 							@RequestParam("spArrJson")String spArrJson,
 							HttpServletRequest request) {
@@ -68,7 +70,7 @@ public class WayBillController {
 		System.out.println("xzArrJson....."+xzArrJson);
 		System.out.println("spArrJson....."+spArrJson);
 		try {
- 			WayBillDTO wayBillDto = JacksonUtil.json2object(ydArrJson, WayBillDTO[].class,true)[0];
+ 			WayBillDTO wayBillDto = JacksonUtil.json2object(ydArrJson.replaceAll("[+]", " "), WayBillDTO[].class,true)[0];
  			WayBillDTO olddto = wayBillFacade.getByWaybillId(wayBillDto.getWaybillId());
  	        if (olddto != null) {
  	            return InvokeResult.failure("运单号：" + wayBillDto.getWaybillId() + "已经入库了，不需要再次出库！");
@@ -90,16 +92,26 @@ public class WayBillController {
 			}
 			List<BillGoodsDTO> list2 = (List<BillGoodsDTO>)JacksonUtil.json2List(spArrJson, new TypeReference<List<BillGoodsDTO>>() {},true);
 			
+			int k = 0;
+			List<MultipartFile> fileList = fileRequest.getFiles("file");
+			
 			for(BillGoodsDTO dto:list2){
 				dto.setCreateTime(new Date());
 				dto.setCreateUser(CurrentUser.getUserAccount());
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
 				
+				if(StringUtils.isNotEmpty(dto.getImage())){
+					String image = uploadFile(fileList.get(k), request);
+					dto.setImage(image);
+					k++;
+				}
+				
 				billGoodsFacade.creatBillGoods(dto);
 			}
 			
 			List<GoodsDTO> list3 = (List<GoodsDTO>)JacksonUtil.json2List(spArrJson, new TypeReference<List<GoodsDTO>>() {},true);
+			
 			for(GoodsDTO dto:list3){
 				// 判断商行品是否已经维护
 				GoodsDTO goodsDTO = new GoodsDTO();
@@ -114,6 +126,7 @@ public class WayBillController {
 				dto.setCreateUser(CurrentUser.getUserAccount());
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
+				
 				goodsFacade.creatGoods(dto);
 			}
 			
@@ -128,6 +141,29 @@ public class WayBillController {
 		
 		return result;
 	}
+	private String uploadFile(MultipartFile file,HttpServletRequest request ){
+		 System.out.println("开始");  
+	        String path = request.getSession().getServletContext().getRealPath("goodsImage");
+	        String fileName = file.getOriginalFilename();
+	        String fileEnd = fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase();
+	        //创建文件唯一名称  
+	        fileName = UUID.randomUUID().toString()+"."+fileEnd;
+	        
+	        System.out.println(path);  
+	        File targetFile = new File(path, fileName);  
+	        if(!targetFile.exists()){  
+	            targetFile.mkdirs();  
+	        }  
+	  
+	        //保存  
+	        try {  
+	            file.transferTo(targetFile);  
+	        } catch (Exception e) {  
+	            e.printStackTrace();  
+	        }  
+	       return request.getContextPath()+"/goodsImage/"+fileName; 
+	}
+	
 //	@RequestMapping("/get/{id}")
 //	public String get(@PathVariable Long id, Model model) {
 	
@@ -241,7 +277,8 @@ public class WayBillController {
 	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping("/updateYd")
-	public InvokeResult update(@RequestParam("ydArrJson")String ydArrJson,
+	public InvokeResult update(MultipartHttpServletRequest fileRequest,
+							@RequestParam("ydArrJson")String ydArrJson,
 							@RequestParam("xzArrJson")String xzArrJson,
 							@RequestParam("spArrJson")String spArrJson,
 							HttpServletRequest request) {
@@ -251,7 +288,7 @@ public class WayBillController {
 		System.out.println("spArrJson"+spArrJson);
 		
 		try {
- 			WayBillDTO wayBillDto = JacksonUtil.json2object(ydArrJson, WayBillDTO[].class,true)[0];
+ 			WayBillDTO wayBillDto = JacksonUtil.json2object(ydArrJson.replaceAll("[+]", " "), WayBillDTO[].class,true)[0];
  			WayBillDTO olddto = wayBillFacade.getByWaybillId(wayBillDto.getWaybillId());
  	        if (olddto == null) {
  	            return InvokeResult.failure("运单号：" + wayBillDto.getWaybillId() + "不存在！");
@@ -261,18 +298,26 @@ public class WayBillController {
 			wayBillDto.setUpdateUser(CurrentUser.getUserAccount());
 			wayBillFacade.updateWayBill(wayBillDto);
 			
-			List<BoxDTO> list = (List<BoxDTO>)JacksonUtil.json2List(xzArrJson, new TypeReference<List<BoxDTO>>() {},true);
+			List<BoxDTO> list = (List<BoxDTO>)JacksonUtil.json2List(xzArrJson.replaceAll("[+]", " "), new TypeReference<List<BoxDTO>>() {},true);
 			for(BoxDTO dto:list){
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
 				boxFacade.updateBox(dto);
 			}
-			List<BillGoodsDTO> list2 = (List<BillGoodsDTO>)JacksonUtil.json2List(spArrJson, new TypeReference<List<BillGoodsDTO>>() {},true);
+			List<BillGoodsDTO> list2 = (List<BillGoodsDTO>)JacksonUtil.json2List(spArrJson.replaceAll("[+]", " "), new TypeReference<List<BillGoodsDTO>>() {},true);
 			
+			int k = 0;
+			List<MultipartFile> fileList = fileRequest.getFiles("file");
+				
 			for(BillGoodsDTO dto:list2){
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
-				
+				if(StringUtils.isNotEmpty(dto.getImage())){
+					
+					String image = uploadFile(fileList.get(k), request);
+					dto.setImage(image);
+					k++;
+				}
 				billGoodsFacade.updateBillGoods(dto);
 			}		
 			

@@ -129,8 +129,8 @@ input[type=file]{
 </style>
 </head>
 <body class="waybill">
-	<section class="section" id="content">
-			<form id="submit" >
+	<section class="section" id="wayBillcontent">
+			<form id="wayBillsubmit" enctype="multipart/form-data" >
 			<article class="yundan" id="yd-1">
 				<h2><koala:i18n key="express.info"/></h2>
 				
@@ -248,7 +248,7 @@ input[type=file]{
 							  		<div class="form-group">
 <!-- 									   		<form id="imageForm" action="" method="post" enctype="multipart/form-data" > -->
 <!-- 									  			<label>商品照片1</label><input type="file"  onchange="upload($(this))" id="goodsimage" name="goodsimage"></input> -->
-												<label><koala:i18n key="PIC"/></label><input type="file"  onchange="upload($(this),this)"  name="files"></input>
+												<label><koala:i18n key="PIC"/></label><input type="file"  onchange="upload($(this),this)"  name="file"></input>
 									  			<img class="img-thumbnail image" src=""/>
 									  			<input type="hidden"  id="goodsimage" name="image">
 <!-- 									  		</form> -->
@@ -337,16 +337,7 @@ input[type=file]{
     			//alert($.i18n.prop('string_username'));
     		}
     	});
-		
-		function upload(obj,file){
-			 if (file.files && file.files[0]) {
-				 var reader = new FileReader();
-				 reader.onload = function(evt){
-					 obj.next().attr("src",evt.target.result);
-				 }
-				 reader.readAsDataURL(file.files[0]);
-			 }
-		};	
+			
 		</script>
 </body>
 </html>

@@ -125,4 +125,8 @@ public class BillGoodsController {
         binder.setAutoGrowCollectionLimit(Integer.MAX_VALUE);
     }
 	
+    public static  void  main(String[] args){
+    	String a = "[{'id':'94','version':'2','waybillId':'1222222','wayBillCoo':'12321323','arrivalTime':'2015-07-25+00:00:00','wayBillFrom':'33','wayBillInternet':'','jpyPrice':'','cnyPrice':'','usdPrice':'','eurPrice':'3312','wayBillNum':'1','createTime':'2015-07-25+15:49:05.0','createUser':'koala','outTime':'','outFlag':'NO'}]";
+    	System.out.println(a.replaceAll("[+]", " "));
+    }
 }

@@ -233,30 +233,30 @@ function getCountry(obj){
 }
 
 // 图片上传
-function upload(obj){
+//function upload(obj){
 // 			var file = obj[0];
 // 			obj.next().attr("src","123.jpg");
 // 	    	ajaxFileUpload(this.files);
 // 	alert($("#imageForm").html());
-	var form = obj.parent();
-	var $this = $(this);
+//	var form = obj.parent();
+//	var $this = $(this);
 	//alert(3333);
-	$("#submit").ajaxSubmit({
-		type: "POST",
-		url:contextPath+"/WayBill/upload.do",
+//	$("#submit").ajaxSubmit({
+//		type: "POST",
+//		url:contextPath+"/WayBill/upload.do",
 // 		data:{file:obj[0]},
-		success: function(data){
-			obj.next().attr("src",contextPath+""+data);
-			obj.parent().find("[name='image']").val(contextPath+""+data);
-		},
-		error:function(e){
-			$this.message({
-				type : 'warning',
-				content : '图片上传失败'
-			});
-		}
-	});
-};	
+//		success: function(data){
+//			obj.next().attr("src",contextPath+""+data);
+//			obj.parent().find("[name='image']").val(contextPath+""+data);
+//		},
+//		error:function(e){
+//			$this.message({
+//				type : 'warning',
+//				content : '图片上传失败'
+//			});
+//		}
+//	});
+//};	
 
 
 // 处理商品位栏目
@@ -372,35 +372,52 @@ function showSP(o){
 	o.next().show();
 }
 
+//图片上传
+function upload(obj,file){
+	 if (file.files && file.files[0]) {
+//		 alert(file.files[0].name);
+		 var reader = new FileReader();
+		 reader.onload = function(evt){
+			 obj.next().attr("src",evt.target.result);
+			 obj.next().next().attr("value",file.files[0].name);
+		 }
+		 reader.readAsDataURL(file.files[0]);
+	 }
+};
+
 // 修改
 function save(){
 	
-	if(!Validator.Validate($("#content").find('form')[0],3)){
+	if(!Validator.Validate($("#updatecontent").find('#submit3')[0],3)){
 		return;
 	}
 	// 运单信息
 	//箱子json信息
 	var ydDataArr=[];
 	var param={}
-	//alert($("#yd-1").find("[name='yd_id']").val());
-	param.id=$("#yd-1").find("[name='yundanid']").val();
-	param.version=$("#yd-1").find("[name='yundanversion']").val();
-	param.waybillId = $("#yd-1").find("[name='yd_id']").val();
-	param.wayBillCoo = $("#yd-1").find("[name='yd_coo']").val();
-	param.arrivalTime = $("#yd-1").find("[name='yd_time']").val()+" 00:00:00" ;
-	param.wayBillFrom = $("#yd-1").find("[name='yd_address']").val();
-	param.wayBillInternet = $("#yd-1").find("[name='yd_url']").val();
-	param.jpyPrice = $("#yd-1").find("[name='yd_jpy']").val();
-	param.cnyPrice = $("#yd-1").find("[name='yd_cny']").val();
-	param.usdPrice = $("#yd-1").find("[name='yd_usd']").val();
-	param.eurPrice = $("#yd-1").find("[name='yd_eur']").val();
-	param.wayBillNum = $("#yd-1").find("[name='yd_num']").val();
+	//alert($("#yd-2").find("[name='yd_id']").val());
+	param.id=$("#yd-2").find("[name='yundanid']").val();
+	param.version=$("#yd-2").find("[name='yundanversion']").val();
+	param.waybillId = $("#yd-2").find("[name='yd_id']").val();
+	param.wayBillCoo = $("#yd-2").find("[name='yd_coo']").val();
+	param.arrivalTime = $("#yd-2").find("[name='yd_time']").val()+" 00:00:00" ;
+	param.wayBillFrom = $("#yd-2").find("[name='yd_address']").val();
+	param.wayBillInternet = $("#yd-2").find("[name='yd_url']").val();
+	param.jpyPrice = $("#yd-2").find("[name='yd_jpy']").val();
+	param.cnyPrice = $("#yd-2").find("[name='yd_cny']").val();
+	param.usdPrice = $("#yd-2").find("[name='yd_usd']").val();
+	param.eurPrice = $("#yd-2").find("[name='yd_eur']").val();
+	param.wayBillNum = $("#yd-2").find("[name='yd_num']").val();
+	param.createTime = $("#yd-2").find("[name='createTime']").val();
+	param.createUser = $("#yd-2").find("[name='createUser']").val();
+	param.outTime = $("#yd-2").find("[name='outTime']").val();
+	param.outFlag = $("#yd-2").find("[name='outFlag']").val();
 	ydDataArr.push(param);
 	var ydArrJson = JSON.stringify(ydDataArr);
 	
 	//箱子json信息
 	var xzDataArr=[];
-	$("#xiangzi").find(".xiangzi").each(function(i,item){
+	$("#yd-2").find("#xiangzi").find(".xiangzi").each(function(i,item){
 		var num = $(this).find("input[name='box_num']").val();// 商品数量
 		var weight = $(this).find("input[name='box_weight']").val();// 箱子重量
 		var length = $(this).find("input[name='box_length']").val();// 长度
@@ -411,7 +428,7 @@ function save(){
 		var param={}
 		param.id=$(this).find("[name='xiangziid']").val();
 		param.version=$(this).find("[name='xiangziversion']").val();
-		param.waybillId = $("#yd-1").find("[name='yd_id']").val();
+		param.waybillId = $("#yd-2").find("[name='yd_id']").val();
 		param.boxId = box_id;
 		param.weight = weight;
 		param.lenght = length;
@@ -419,6 +436,9 @@ function save(){
 		param.height = height;
 		param.volume = vol;
 		param.goodsNum = num;
+		param.createTime = $(this).find("[name='createTime']").val();
+		param.createUser = $(this).find("[name='createUser']").val();
+		
 		xzDataArr.push(param);
 	})
 	var xzArrJson = JSON.stringify(xzDataArr);
@@ -426,7 +446,7 @@ function save(){
 	
 	// 商品信息
 	var spDataArr=[];
-	$("#xiangzi").find("article[class='shangpin']").each(function(i,item){
+	$("#yd-2").find("#xiangzi").find("article[class='shangpin']").each(function(i,item){
 		var xzId =  i+1;
 		$(this).find(".sp").each(function(j,item2){
 			var param={};
@@ -434,7 +454,7 @@ function save(){
 			param.spId = j + 1;
 			param.id=$(this).find("[name='shangpinid']").val();
 			param.version=$(this).find("[name='shangpinversion']").val();
-			param.waybillId = $("#yd-1").find("[name='yd_id']").val();
+			param.waybillId = $("#yd-2").find("[name='yd_id']").val();
 //			alert(this.parent().parent().find(".xz").attr("id").replace("xz-",""));
 //			param.boxId = this.parent().parent().find(".xz").attr("id").replace("xz-","");
 			param.goodsId = $(this).find("[name='goodsId']").val();
@@ -457,12 +477,15 @@ function save(){
 			param.volume = $(this).find("[name='volume']").val();
 			param.composition = $(this).find("[name='composition']").val();
 			param.image = $(this).find("[name='image']").val();
+			param.createTime = $(this).find("[name='createTime']").val();
+			param.createUser = $(this).find("[name='createUser']").val();
+			
 			spDataArr.push(param);
 		})
 	})
 	var spArrJson = JSON.stringify(spDataArr);
 	var $this = $(this);
-	$.ajax({
+	$("#submit3").ajaxSubmit({
 	  	   type: "POST",
 	  	   async: false,
 	  	   data: {ydArrJson:ydArrJson,xzArrJson:xzArrJson,spArrJson:spArrJson},

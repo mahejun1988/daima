@@ -24,6 +24,7 @@ public class WayBillDTO implements Serializable {
 	private String usdPrice;
 	private String eurPrice;
 	private String outFlag;
+	private String outFlagName;
 	private Date ArrivalTime;
 	private Date ArrivalTimeEnd;
 	@JsonSerialize(using = CustomDateSerializer.class)
@@ -271,5 +272,13 @@ public class WayBillDTO implements Serializable {
 
 	public void setList(List<BoxDTO> list) {
 		this.list = list;
+	}
+
+	public String getOutFlagName() {
+		return outFlagName;
+	}
+
+	public void setOutFlagName(String outFlagName) {
+		this.outFlagName = outFlagName;
 	}
 }
