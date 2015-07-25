@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.lang.StringUtils;
 import org.dayatang.utils.Page;
 
 import com.ware.token.warehouse.facade.dto.*;
@@ -143,12 +144,14 @@ public class GoodsController {
 	@RequestMapping("/getByGoodsId")
 	public GoodsDTO getByGoodsId(String goodsId) {
 		GoodsDTO goodsDTO = new GoodsDTO();
-		goodsDTO.setGoodsId(goodsId);
-		int page = 0;
-		int pagesize=1;
-		Page<GoodsDTO> all = goodsFacade.getByGoodsId(goodsDTO, page, pagesize);
-		if(all.getData().size()==1){
-			goodsDTO = all.getData().get(0);
+		if(StringUtils.isNotEmpty(goodsId)){
+			goodsDTO.setGoodsId(goodsId);
+			int page = 0;
+			int pagesize=1;
+			Page<GoodsDTO> all = goodsFacade.getByGoodsId(goodsDTO, page, pagesize);
+			if(all.getData().size()==1){
+				goodsDTO = all.getData().get(0);
+			}
 		}
 		return goodsDTO;
 	}

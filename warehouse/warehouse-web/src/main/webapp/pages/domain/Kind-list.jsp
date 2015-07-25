@@ -266,7 +266,7 @@ $(function (){
 	}
 	PageLoader.initSearchPanel();
 	PageLoader.initGridPanel();
-	form.find('#search').on('click', function(){
+	form.find('#kindsearch').on('click', function(){
             if(!Validator.Validate(document.getElementById("<%=formId%>"),3))return;
             var params = {};
             form.find('input').each(function(){
@@ -312,8 +312,8 @@ var openDetailsPage = function(id){
 <div style="width:98%;margin-right:auto; margin-left:auto; padding-top: 15px;">
 <!-- search form -->
 <form name=<%=formId%> id=<%=formId%> target="_self" class="form-horizontal">
-<input type="hidden" name="page" value="0">
-<input type="hidden" name="pagesize" value="10">
+<!-- <input  name="page" value="0"> -->
+<!-- <input  name="pagesize" value="10"> -->
 <table border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td>
@@ -323,14 +323,14 @@ var openDetailsPage = function(id){
 	             <div class="btn-group select" id="codeType_SELECT"></div>
 		         <input type="hidden" id="codeTypeID_"  name="codeType" />
 	         </div>
-<%--           <label class="control-label" style="width:100px;float:left;"><koala:i18n key="kind.sub.code"/>:&nbsp;</label> --%>
-<!--              <div style="margin-left:15px;float:left;"> -->
-<!-- 	             <div class="btn-group select" id="code_SELECT"></div> -->
-<!-- 		         <input type="hidden" id="codeID_"  name="code" /> -->
-<!-- 	         </div> -->
+          <label class="control-label" style="width:100px;float:left;"><koala:i18n key="kind.sub.code"/>:&nbsp;</label>
+             <div style="margin-left:15px;float:left;">
+	             <div class="btn-group select" id="code_SELECT"></div>
+		         <input type="hidden" id="upCodeID_"  name="upCode" value="0"/>
+	         </div>
         </div>  
      </td>
-     <td style="vertical-align: bottom;"><button id="search" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;<koala:i18n key="query"/></button></td>
+     <td style="vertical-align: bottom;"><button id="kindsearch" type="button" style="position:relative; margin-left:35px; top: -15px" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span>&nbsp;<koala:i18n key="query"/></button></td>
   </tr>
 </table>	
 </form>
@@ -350,12 +350,31 @@ var openDetailsPage = function(id){
 	});
     var selectItems = {};
     var contents = [{title:$.i18n.prop('choose'), value: ''}];
-    var contents1 = [{title:$.i18n.prop('choose'), value: ''}];
+    var contents1 = [{title:$.i18n.prop('choose'), value: '0'}];
     selectItems['code_SELECT'] = contents1;
         contents.push({title:$.i18n.prop('express.company') , value:'express'});
         contents.push({title:$.i18n.prop('goods_kind') , value:'kind'});
         contents.push({title:$.i18n.prop('goods_made_in') , value:'country'});
         selectItems['codeType_SELECT'] = contents;
+        
+     // 自动补全 种类
+//         function getBigKind(){
+        	$.ajax({
+        	  	   type: "POST",
+        	  	   async: false,
+        	  	   data: {upCode:'0',codeType:'kind'},
+        	  	   url: contextPath+"/Kind/getCodeList.do",
+        	  	   success: function(data){
+        	  			var arr = [];
+        	  		    $.each(data, function (i, item) {  
+        	  		 		if(item.codeName!=""){
+        	  		 			contents1.push({title:item.codeName,value:item.code});
+        	  		 		}
+        	  	        });
+        	  		  selectItems['code_SELECT'] = contents1;
+        	  	   }
+        	  	})
+//         }
 </script>
 </body>
 </html>

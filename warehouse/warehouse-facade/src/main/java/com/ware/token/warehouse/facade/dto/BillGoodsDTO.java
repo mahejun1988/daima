@@ -92,6 +92,8 @@ public class BillGoodsDTO implements Serializable {
 		
 				
 		private String updateUser;
+		private String imgFlag;
+		
 		private int page;
 		private int pagesize;
 			
@@ -414,5 +416,13 @@ public class BillGoodsDTO implements Serializable {
 
 	public void setPagesize(int pagesize) {
 		this.pagesize = pagesize;
+	}
+
+	public String getImgFlag() {
+		return imgFlag;
+	}
+
+	public void setImgFlag(String imgFlag) {
+		this.imgFlag = imgFlag;
 	}
 }

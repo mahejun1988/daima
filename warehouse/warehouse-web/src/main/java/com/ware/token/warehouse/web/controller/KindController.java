@@ -100,6 +100,7 @@ public class KindController {
 	@ResponseBody
 	@RequestMapping("/pageJson")
 	public Page pageJson(KindDTO kindDTO, @RequestParam int page, @RequestParam int pagesize) {
+//		kindDTO.setUpCode("0");
 		Page<KindDTO> all = kindFacade.pageQueryKind(kindDTO, page, pagesize);
 		return all;
 	}

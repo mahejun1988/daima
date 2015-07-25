@@ -452,6 +452,7 @@
 				}
 				(self.pageNo + self.showPage) < self.totalPage && pageHtml.push('<li><a href="#">...</a></li>');
 			} else {
+				
 				var start = Math.floor(self.pageNo / self.showPage) * self.showPage;
 				start != Grid.DEFAULTS.pageNo && pageHtml.push('<li><a href="#">...</a></li>');
 				for (var i = start; i < self.totalPage && i < (start + self.showPage); i++) {

@@ -380,6 +380,7 @@ function upload(obj,file){
 		 reader.onload = function(evt){
 			 obj.next().attr("src",evt.target.result);
 			 obj.next().next().attr("value",file.files[0].name);
+			 obj.next().next().next().attr("value",1);
 		 }
 		 reader.readAsDataURL(file.files[0]);
 	 }
@@ -479,6 +480,7 @@ function save(){
 			param.image = $(this).find("[name='image']").val();
 			param.createTime = $(this).find("[name='createTime']").val();
 			param.createUser = $(this).find("[name='createUser']").val();
+			param.imgFlag = $(this).find("[name='imgFlag']").val();
 			
 			spDataArr.push(param);
 		})

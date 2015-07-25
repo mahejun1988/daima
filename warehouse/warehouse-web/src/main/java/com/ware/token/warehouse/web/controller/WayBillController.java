@@ -101,7 +101,7 @@ public class WayBillController {
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
 				
-				if(StringUtils.isNotEmpty(dto.getImage())){
+				if(StringUtils.isNotEmpty(dto.getImage()) && fileList.size() > k){
 					String image = uploadFile(fileList.get(k), request);
 					dto.setImage(image);
 					k++;
@@ -312,7 +312,7 @@ public class WayBillController {
 			for(BillGoodsDTO dto:list2){
 				dto.setUpdateTime(new Date());
 				dto.setUpdateUser(CurrentUser.getUserAccount());
-				if(StringUtils.isNotEmpty(dto.getImage())){
+				if(StringUtils.isNotEmpty(dto.getImgFlag()) && fileList.size() > k){
 					
 					String image = uploadFile(fileList.get(k), request);
 					dto.setImage(image);

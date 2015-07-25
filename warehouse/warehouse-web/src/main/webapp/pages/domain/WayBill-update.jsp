@@ -258,6 +258,7 @@ input[type=file]{
 												<label><koala:i18n key="PIC"/></label><input type="file"  onchange="upload($(this),this)"  name="file"></input>
 									  			<img class="img-thumbnail image" src="${spDto.image}"/>
 									  			<input type="hidden"  id="goodsimage" name="image" value="${spDto.image}">
+									  			<input type="hidden"  id="goodsimageFlag" name="imgFlag" value="">
 <!-- 									  		</form> -->
 									 </div>
 							  	</div>

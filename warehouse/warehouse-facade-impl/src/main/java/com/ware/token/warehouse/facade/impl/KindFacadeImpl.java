@@ -97,12 +97,12 @@ public class KindFacadeImpl implements KindFacade {
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getTypeName()));
 	   	}		
 	   	if (queryVo.getUpCode() != null && !"".equals(queryVo.getUpCode())) {
-	   		jpql.append(" and _kind.upCode like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getUpCode()));
+	   		jpql.append(" and _kind.upCode = ?");
+	   		conditionVals.add(MessageFormat.format("{0}", queryVo.getUpCode()));
 	   	}		
 	   	if (queryVo.getCode() != null && !"".equals(queryVo.getCode())) {
-	   		jpql.append(" and _kind.code like ?");
-	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getCode()));
+	   		jpql.append(" and _kind.code = ?");
+	   		conditionVals.add(MessageFormat.format("{0}", queryVo.getCode()));
 	   	}		
 	   	if (queryVo.getCodeName() != null && !"".equals(queryVo.getCodeName())) {
 	   		jpql.append(" and _kind.codeName like ?");
@@ -113,7 +113,7 @@ public class KindFacadeImpl implements KindFacade {
 	   		conditionVals.add(MessageFormat.format("%{0}%", queryVo.getRemark()));
 	   	}		
         @SuppressWarnings("unchecked")
-		Page<Kind> pages = getQueryChannelService()
+		Page pages = getQueryChannelService()
 		   .createJpqlQuery(jpql.toString())
 		   .setParameters(conditionVals)
 		   .setPage(currentPage, pageSize)
